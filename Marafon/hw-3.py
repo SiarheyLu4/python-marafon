@@ -7,9 +7,12 @@ pygame.init()
 
 FPS = pygame.time.Clock()
 
-screen = width, heigth = 1200, 800
+screen = width, heigth = 800, 600
 
+BLACK = 0, 0, 0
+WHITE = 255, 255, 255
 RED = 255, 0, 0
+GREEN = 0, 255, 0
 
 font = pygame.font.SysFont('Verdana', 20)
 
@@ -17,6 +20,8 @@ main_surface = pygame.display.set_mode(screen)
 
 IMGS_PATH = 'goose'
 
+# player = pygame.Surface((20, 20))
+# player.fill(WHITE)
 player_imgs = [pygame.image.load(IMGS_PATH + '/' + file).convert_alpha()
                for file in listdir(IMGS_PATH)]
 player = player_imgs[0]
@@ -25,33 +30,34 @@ player_speed = 5
 
 
 def create_enemy():
-    enemy = pygame.transform.scale(pygame.image.load(
-        'enemy.png').convert_alpha(), (90, 33))
+    # enemy = pygame.Surface((20, 20))
+    # enemy.fill(RED)
+    enemy = pygame.image.load('enemy.png').convert_alpha()
     enemy_rect = pygame.Rect(
-        width, random.randint(0, heigth - 33), *enemy.get_size())
+        width, random.randint(0, heigth - 30), *enemy.get_size())
     enemy_speed = random.randint(2, 5)
     return [enemy, enemy_rect, enemy_speed]
-
-
-def create_bonus():
-    bonus = pygame.transform.scale(pygame.image.load(
-        'bonus.png').convert_alpha(), (50, 100))
-    bonus_rect = pygame.Rect(
-        random.randint(0, width - 50), 0, *bonus.get_size())
-    bonus_speed = random.randint(2, 5)
-    return [bonus, bonus_rect, bonus_speed]
 
 
 CREATE_ENEMY = pygame.USEREVENT + 1
 pygame.time.set_timer(CREATE_ENEMY, 2500)
 
+enemies = []
+
+
+def create_bonus():
+    # bonus = pygame.Surface((20, 20))
+    # bonus.fill(GREEN)
+    bonus = pygame.image.load('bonus.png').convert_alpha()
+    bonus_rect = pygame.Rect(
+        random.randint(0, width - 60), 0, *bonus.get_size())
+    bonus_speed = random.randint(2, 5)
+    return [bonus, bonus_rect, bonus_speed]
+
+
 CREATE_BONUS = pygame.USEREVENT + 2
 pygame.time.set_timer(CREATE_BONUS, 3500)
 
-CHANGE_IMG = pygame.USEREVENT + 3
-pygame.time.set_timer(CHANGE_IMG, 125)
-
-enemies = []
 bonuses = []
 
 bg = pygame.transform.scale(pygame.image.load(
@@ -59,6 +65,9 @@ bg = pygame.transform.scale(pygame.image.load(
 bgX = 0
 bgX2 = bg.get_width()
 bg_speed = 3
+
+CHANGE_IMG = pygame.USEREVENT + 3
+pygame.time.set_timer(CHANGE_IMG, 125)
 
 img_index = 0
 
@@ -88,6 +97,10 @@ while is_working:
 
     pressed_keys = pygame.key.get_pressed()
 
+    # main_surface.fill(BLACK)
+
+    # main_surface.blit(bg, (0, 0))
+
     bgX -= bg_speed
     bgX2 -= bg_speed
 
@@ -102,7 +115,7 @@ while is_working:
 
     main_surface.blit(player, player_rect)
 
-    main_surface.blit(font.render(str(scores), True, RED), (width - 30, 0))
+    main_surface.blit(font.render(str(scores), True, GREEN), (width - 30, 0))
 
     for enemy in enemies:
         enemy[1] = enemy[1].move(-enemy[2], 0)
@@ -137,6 +150,10 @@ while is_working:
     if pressed_keys[K_RIGHT] and not player_rect.right >= width:
         player_rect = player_rect.move(player_speed, 0)
 
+    # print(len(enemies))
+    # print(len(bonuses))
+
+    # main_surface.fill((155, 155, 155))
     pygame.display.flip()
 
     pygame.time.delay(3)
